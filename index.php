@@ -36,14 +36,8 @@ $hotels = [
         'distance_to_center' => 50
     ],
 ];
-// foreach ($hotels as $hotel) {
-//     foreach ($hotel as $key => $value) {
-//         echo $key;
-//         echo $value;
-//         echo "<br />";
-//     }
-//     echo "<br />";
-// }
+$parking = $_GET["parking"] ?? "";
+$vote = $_GET["vote"] ?? "";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,32 +52,60 @@ $hotels = [
 </head>
 
 <body>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <?php
-                foreach ($hotels[0] as $key => $value) {
-                    echo "<th scope='col'>" . $key . "</th>";
-                }
-                ?>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            $count = 1;
-            foreach ($hotels as $hotel) {
-                echo "<tr>";
-                echo "<th scope='row'>" . $count . "</th>";
-                foreach ($hotel as $key => $value) {
-                    echo "<td>" . $value . "</td>";
-                }
-                echo "</tr>";
-                $count++;
-            }
-            ?>
-        </tbody>
-    </table>
+    <main>
+        <section>
+            <form action="index.php" method="get">
+                <div>
+                    <label for="parking">Filtra hotel con parcheggio</label>
+                    <select name="parking" id="parking">
+                        <option value="" <?php echo empty($parking) ? "selected" : ""; ?>>Tutti gli hotel</option>
+                        <option value=true <?php echo $parking == true ? "selected" : ""; ?>>Hotel con parcheggio</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="vote">Filtra hotel per voto</label>
+                    <select name="vote" id="vote">
+                        <option value="" <?php echo empty($vote) ? "selected" : ""; ?>>Tutti gli hotel</option>
+                        <option value=2 <?php echo $vote == 2 ? "selected" : ""; ?>>2+</option>
+                        <option value=3 <?php echo $vote == 3 ? "selected" : ""; ?>>3+</option>
+                        <option value=4 <?php echo $vote == 4 ? "selected" : ""; ?>>4+</option>
+                        <option value=5 <?php echo $vote == 5 ? "selected" : ""; ?>>5</option>
+                    </select>
+                </div>
+                <button type="submit">Filtra</button>
+            </form>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <?php
+                        foreach ($hotels[0] as $key => $value) {
+                            echo "<th scope='col'>" . $key . "</th>";
+                        }
+                        ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $count = 1;
+                    foreach ($hotels as $hotel) {
+                        if (empty($parking) || $hotel["parking"] == $parking) {
+                            if (empty($vote) || $hotel["vote"] >= $vote) {
+                                echo "<tr>";
+                                echo "<th scope='row'>" . $count . "</th>";
+                                foreach ($hotel as $key => $value) {
+                                    echo "<td>" . $value . "</td>";
+                                }
+                                echo "</tr>";
+                                $count++;
+                            }
+                        }
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </section>
+    </main>
 </body>
 
 </html>
